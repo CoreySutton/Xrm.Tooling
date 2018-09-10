@@ -2,12 +2,16 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CoreySutton.Xrm.Tooling.MergeSolutions.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="CrmConnectionString" Type="(Connection string)" Scope="Application">
+    <Setting Name="SourceCrmConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;ConnectionString&gt;ConnectionString&lt;/ConnectionString&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">ConnectionString</Value>
+    </Setting>
+    <Setting Name="TargetCrmConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)" />
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

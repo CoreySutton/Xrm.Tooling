@@ -12,55 +12,97 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 {
     internal class Program
     {
+        // TODO copy coretools to bin as this relative path will break
+        private const string _solutionPackagerPath = "../coretools/SolutionPackager.exe";
+        private const string _workingDirectory = "./";
+
         private static void Main(string[] args)
         {
-            // Connect to CRM
-            string crmConnectionString = Properties.Settings.Default.CrmConnectionString;
-            IOrganizationService organizationService = CrmConnectorUtil.Connect(crmConnectionString);
+            try
+            {
+                IOrganizationService sourceOrganizationService = ConnectToSource();
+                IOrganizationService targetOrganizationService = ConnectToTarget() ?? sourceOrganizationService;
 
-            // Get solution1
-            Entity solution1 = SolutionUtil.GetSolution(organizationService);
-            if (solution1 == null) return;
+                string targetSolutionName = PromptTargetSolutionName();
 
-            // Get solution2
-            Entity solution2 = SolutionUtil.GetSolution(organizationService);
-            if (solution2 == null) return;
+                bool anotherSolution;
+                do
+                {
+                    AddSolutionToTarget(sourceOrganizationService, targetOrganizationService, targetSolutionName);
+                    anotherSolution = PromptAnotherSolution();
+                } while (anotherSolution);
 
-            string solution1Name = solution1.GetAttributeValue<string>("uniquename");
-            string solution2Name = solution2.GetAttributeValue<string>("uniquename");
-
-            string solution1FileName = $"{solution1Name}.zip";
-            string solution2FileName = $"{solution2Name}.zip";
-
-            // TODO copy coretools to bin as this relative path will break
-            string solutionPackagerPath = "../coretools/SolutionPackager.exe";
-            string workingDirectory = "./";
-
-            // Download solutions
-            ExportUnmanagedSolution(organizationService, solution1Name, solution1FileName);
-            ExportUnmanagedSolution(organizationService, solution2Name, solution2FileName);
-
-            // Unpack solution zips
-            UnpackUnmangedSolutionZip(solution1Name, solution1FileName, solutionPackagerPath, workingDirectory);
-            UnpackUnmangedSolutionZip(solution2Name, solution2FileName, solutionPackagerPath, workingDirectory);
-
-            // Modify unique name
-            SetPackageName("temp", solution1Name);
-            SetPackageName("temp", solution2Name);
-
-            // Pack solution zips
-            PackUnmangedSolutionZip(solution1Name, "temp1.zip", solutionPackagerPath, workingDirectory);
-            PackUnmangedSolutionZip(solution2Name, "temp2.zip", solutionPackagerPath, workingDirectory);
-
-            // Upload solutions to CRM
-            ImportUnmanagedSolution(organizationService, "temp1.zip");
-            ImportUnmanagedSolution(organizationService, "temp2.zip");
-
-            // TODO
-            // Clean up local environment
+            }
+            catch (Exception ex)
+            {
+                ExConsole.WriteColor($"An exception occurred: {ex.Message}", ConsoleColor.Red);
+                ExConsole.WriteColor(ex.StackTrace, ConsoleColor.DarkGray);
+            }
 
             Console.WriteLine("Complete");
             Console.ReadLine();
+        }
+
+        private static IOrganizationService ConnectToSource()
+        {
+            string crmConnectionString = Properties.Settings.Default.SourceCrmConnectionString;
+            return CrmConnectorUtil.Connect(crmConnectionString);
+        }
+
+        private static IOrganizationService ConnectToTarget()
+        {
+            string crmConnectionString = Properties.Settings.Default.TargetCrmConnectionString;
+            return string.IsNullOrEmpty(crmConnectionString) ? null : CrmConnectorUtil.Connect(crmConnectionString);
+        }
+
+        private static string PromptTargetSolutionName()
+        {
+            Console.WriteLine("Target solution name:");
+            while (true)
+            {
+                Console.Write(">> ");
+                string input = Console.ReadLine();
+                if (string.IsNullOrEmpty(input))
+                {
+                    Console.WriteLine("Invalid option. Try again");
+                }
+                else
+                {
+                    return input;
+                }
+            }
+        }
+
+        private static void AddSolutionToTarget(
+            IOrganizationService sourceOrganizationService,
+            IOrganizationService targetOrganizationService,
+            string targetSolutionName)
+        {
+            // Get solution
+            Entity solution = SolutionUtil.GetSolution(sourceOrganizationService);
+            if (solution == null) return;
+
+            string solutionName = solution.GetAttributeValue<string>("uniquename");
+            string solutionFileName = $"{solutionName}.zip";
+            string targetSolutionFileName = $"{targetSolutionName}.zip";
+
+            // Download solution
+            ExportUnmanagedSolution(sourceOrganizationService, solutionName, solutionFileName);
+
+            // Unpack solution zip
+            UnpackUnmangedSolutionZip(solutionName, solutionFileName, _solutionPackagerPath, _workingDirectory);
+
+            // Modify unique name
+            SetPackageName(targetSolutionName, solutionName);
+
+            // Pack solution zip
+            PackUnmangedSolutionZip(solutionName, targetSolutionFileName, _solutionPackagerPath, _workingDirectory);
+
+            // Upload solution to CRM
+            ImportUnmanagedSolution(targetOrganizationService, targetSolutionFileName);
+
+            // TODO
+            // Clean up local environment
         }
 
         private static void ExportUnmanagedSolution(
@@ -256,6 +298,28 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             ImportSolutionResponse response = (ImportSolutionResponse)organizationService.Execute(request);
 
             ExConsole.WriteLineToRight("[Done]");
+        }
+
+        private static bool PromptAnotherSolution()
+        {
+            Console.WriteLine("Add another solution? (yes/no)");
+            while (true)
+            {
+                Console.Write(">> ");
+                string input = Console.ReadLine();
+                if (string.IsNullOrEmpty(input) || (input != "yes" && input != "no" && input != "y" && input != "n"))
+                {
+                    Console.WriteLine("Invalid option. Try again");
+                }
+                else if (input == "yes" || input == "y")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using CommandLine;
 using CoreySutton.Utilities;
 using CoreySutton.Xrm.Utilities;
 using Microsoft.Xrm.Sdk;
@@ -7,20 +9,13 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 {
     internal class Program
     {
-
-
         private static void Main(string[] args)
         {
             try
             {
-                IOrganizationService sourceOrganizationService = ConnectToSource();
-                IOrganizationService targetOrganizationService = ConnectToTarget() ?? sourceOrganizationService;
-
-                SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
-                solutionRepackager.SetTargetSolution();
-                solutionRepackager.SetSourceSolutions();
-                solutionRepackager.SetVersion();
-                solutionRepackager.StartMerge();
+                Parser.Default.ParseArguments<CliOptions>(args)
+                    .WithParsed(Run)
+                    .WithNotParsed(HandleParseError);
             }
             catch (Exception ex)
             {
@@ -30,6 +25,28 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 
             Console.WriteLine("Complete");
             Console.ReadLine();
+        }
+
+        private static void Run(CliOptions options)
+        {
+            IOrganizationService sourceOrganizationService = ConnectToSource();
+            IOrganizationService targetOrganizationService = ConnectToTarget() ?? sourceOrganizationService;
+
+            SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
+            solutionRepackager.SetTargetSolution();
+            solutionRepackager.SetSourceSolutions();
+            solutionRepackager.SetVersion();
+            solutionRepackager.StartMerge();
+        }
+
+        private static void HandleParseError(IEnumerable<Error> errors)
+        {
+            foreach (Error error in errors)
+            {
+                Console.WriteLine(error);
+                Console.WriteLine($"Tag: {error.Tag}");
+                Console.WriteLine($"Stops Processing: {error.StopsProcessing}");
+            }
         }
 
         private static IOrganizationService ConnectToSource()

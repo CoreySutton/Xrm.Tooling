@@ -1,16 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using CoreySutton.Utilities;
 using CoreySutton.Xrm.Utilities;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+
 
 namespace CoreySutton.Xrm.Tooling.Core
 {
     public static class SolutionUtil
     {
-        public static Entity GetSolution(IOrganizationService organizationService)
+        public static Entity GetSolution(IOrganizationService organizationService, bool allowNew = false)
         {
-            // Get solutions
+            // Get all unmanaged solutions
+            List<Entity> solutions = GetUnmanagedSolutions(organizationService);
+            if (solutions == null)
+            {
+                Console.WriteLine("No solutions found");
+                return null;
+            }
+
+            // Pick solution
+            Entity selectedSolution = PromptPickSolution(solutions, allowNew);
+            if (selectedSolution == null) return null;
+
+            // Display solution information
+            Console.WriteLine($"Friendly Name: {selectedSolution.GetAttributeValue<string>("friendlyname")}");
+            Console.WriteLine($"Unique Name: {selectedSolution.GetAttributeValue<string>("uniquename")}");
+            Console.WriteLine($"Version Number: {selectedSolution.GetAttributeValue<string>("version")}");
+
+            return selectedSolution;
+        }
+
+        public static List<Entity> GetUnmanagedSolutions(IOrganizationService organizationService)
+        {
             QueryExpression query = new QueryExpression
             {
                 EntityName = "solution",
@@ -23,25 +46,37 @@ namespace CoreySutton.Xrm.Tooling.Core
                     }
                 }
             };
-            List<Entity> solutions = organizationService.RetrieveMultiple<Entity>(query);
-            if (solutions == null)
-            {
-                Console.WriteLine("No solutions found");
-                return null;
-            }
+
+            return organizationService.RetrieveMultiple<Entity>(query);
+        }
+
+        public static void PrintSolutions(IList<Entity> solutions, bool allowNew = false)
+        {
+            Argument.IsNotNullOrEmpty(solutions, nameof(solutions));
 
             // Display solutions
-            Console.WriteLine("Select a solution:");
-            int count = 0;
+            int count = 1;
+
+            if (allowNew)
+            {
+                Console.WriteLine("(0) **Create New Solution**");
+            }
+
             foreach (Entity solution in solutions)
             {
                 Console.WriteLine($"({count++})" +
                                   $" {solution.GetAttributeValue<string>("friendlyname")}" +
                                   $" {solution.GetAttributeValue<string>("uniquename")}");
             }
+        }
+
+        public static Entity PromptPickSolution(IList<Entity> solutions, bool allowNew = false)
+        {
+            Argument.IsNotNullOrEmpty(solutions, nameof(solutions));
 
             // Prompt to select a solution
             int selection = -1;
+            Console.WriteLine("Select a solution:");
             while (selection < 0)
             {
                 Console.Write(">> ");
@@ -52,13 +87,7 @@ namespace CoreySutton.Xrm.Tooling.Core
                 }
             }
 
-            // Get solution
-            Entity selectedSolution = solutions[selection];
-            Console.WriteLine($"Friendly Name: {selectedSolution.GetAttributeValue<string>("friendlyname")}");
-            Console.WriteLine($"Unique Name: {selectedSolution.GetAttributeValue<string>("uniquename")}");
-            Console.WriteLine($"Version Number: {selectedSolution.GetAttributeValue<string>("version")}");
-
-            return selectedSolution;
+            return selection == 0 ? null : solutions[selection - 1];
         }
     }
 }

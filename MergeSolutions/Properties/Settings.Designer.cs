@@ -26,7 +26,6 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("ConnectionString")]
         public string SourceCrmConnectionString {
             get {
                 return ((string)(this["SourceCrmConnectionString"]));

@@ -60,51 +60,8 @@ namespace CoreySutton.Xrm.Tooling.PatchAndUpgrade
 
         private static void CloneAsPatch(IOrganizationService organizationService, Entity solution)
         {
-            // Parse current version number
-            string[] currentVersionComponents = solution.GetAttributeValue<string>("version").Split('.');
-            int.TryParse(currentVersionComponents[0], out int currentMajor);
-            int.TryParse(currentVersionComponents[1], out int currentMinor);
-            int.TryParse(currentVersionComponents[2], out int currentPatch);
-            int.TryParse(currentVersionComponents[3], out int currentBuild);
-
-            // Prompt for version number
-            string version = string.Empty;
-            while (string.IsNullOrEmpty(version))
-            {
-                Console.WriteLine("Set version number:");
-                Console.Write(">> ");
-
-                string input = Console.ReadLine();
-                if (string.IsNullOrEmpty(input))
-                {
-                    Console.WriteLine("Version number cannot be empty");
-                }
-                else
-                {
-                    string[] versionComponents = input.Split('.');
-                    if (versionComponents.Length != 4 ||
-                        !int.TryParse(versionComponents[0], out int major) ||
-                        !int.TryParse(versionComponents[1], out int minor) ||
-                        !int.TryParse(versionComponents[2], out int patch) ||
-                        !int.TryParse(versionComponents[3], out int build))
-                    {
-                        Console.WriteLine("Invalid version number");
-                    }
-                    else if (major != currentMajor || minor != currentMinor)
-                    {
-                        Console.WriteLine("Cannot increment major or minor version numbers");
-                    }
-                    else if (patch < currentPatch && build <= currentBuild)
-                    {
-                        Console.WriteLine("Patch or build version numbers must be incremented");
-                    }
-                    else
-                    {
-                        version = input;
-                    }
-                }
-            }
-
+            string currentVersion = solution.GetAttributeValue<string>("version");
+            string version = VersionNumberUtil.PromptIncrementPatchOrBuild(currentVersion);
 
             // Create patch
             CloneAsPatchRequest cloneRequest = new CloneAsPatchRequest();
@@ -118,51 +75,8 @@ namespace CoreySutton.Xrm.Tooling.PatchAndUpgrade
 
         private static void CloneAsUpgrade(IOrganizationService organizationService, Entity solution)
         {
-            // Parse current version number
-            string[] currentVersionComponents = solution.GetAttributeValue<string>("version").Split('.');
-            int.TryParse(currentVersionComponents[0], out int currentMajor);
-            int.TryParse(currentVersionComponents[1], out int currentMinor);
-            int.TryParse(currentVersionComponents[2], out int currentPatch);
-            int.TryParse(currentVersionComponents[3], out int currentBuild);
-
-            // Prompt for version number
-            string version = string.Empty;
-            while (string.IsNullOrEmpty(version))
-            {
-                Console.WriteLine("Set version number:");
-                Console.Write(">> ");
-
-                string input = Console.ReadLine();
-                if (string.IsNullOrEmpty(input))
-                {
-                    Console.WriteLine("Version number cannot be empty");
-                }
-                else
-                {
-                    string[] versionComponents = input.Split('.');
-                    if (versionComponents.Length != 4 ||
-                        !int.TryParse(versionComponents[0], out int major) ||
-                        !int.TryParse(versionComponents[1], out int minor) ||
-                        !int.TryParse(versionComponents[2], out int patch) ||
-                        !int.TryParse(versionComponents[3], out int build))
-                    {
-                        Console.WriteLine("Invalid version number");
-                    }
-                    else if (patch != currentPatch || build != currentBuild)
-                    {
-                        Console.WriteLine("Cannot increment patch or build version numbers");
-                    }
-                    else if (major < currentMajor && minor <= currentMinor)
-                    {
-                        Console.WriteLine("Major or minor version numbers must be incremented");
-                    }
-                    else
-                    {
-                        version = input;
-                    }
-                }
-            }
-
+            string currentVersion = solution.GetAttributeValue<string>("version");
+            string version = VersionNumberUtil.PromptIncrementMajorOrMinor(currentVersion);
 
             // Create patch
             CloneAsSolutionRequest cloneRequest = new CloneAsSolutionRequest();

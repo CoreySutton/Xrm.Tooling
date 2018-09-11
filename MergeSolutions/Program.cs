@@ -19,6 +19,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
                 SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
                 solutionRepackager.SetTargetSolution();
                 solutionRepackager.SetSourceSolutions();
+                solutionRepackager.SetVersion();
                 solutionRepackager.StartMerge();
             }
             catch (Exception ex)

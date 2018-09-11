@@ -76,10 +76,9 @@ namespace CoreySutton.Xrm.Tooling.Core
 
             // Prompt to select a solution
             int selection = -1;
-            Console.WriteLine("Select a solution:");
+            Console.Write(">> Select a solution:");
             while (selection < 0)
             {
-                Console.Write(">> ");
                 string input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input) || !int.TryParse(input, out selection))
                 {

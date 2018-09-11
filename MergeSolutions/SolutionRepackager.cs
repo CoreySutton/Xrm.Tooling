@@ -20,6 +20,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
         private readonly List<Entity> _sourceSolutions = new List<Entity>();
         private string _targetSolutionFileName;
         private string _targetSolutionName;
+        private string _targetSolutionVersion;
         private Entity _targetSolution;
 
         public SolutionRepackager(
@@ -66,6 +67,19 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             } while (anotherSolution);
         }
 
+        public void SetVersion()
+        {
+            if (_targetSolution != null)
+            {
+                string currentVersion = _targetSolution.GetAttributeValue<string>("version");
+                _targetSolutionVersion = VersionNumberUtil.PromptIncrement(currentVersion);
+            }
+            else
+            {
+                _targetSolutionVersion = VersionNumberUtil.Prompt();
+            }
+        }
+
         public void StartMerge()
         {
             foreach (Entity solution in _sourceSolutions)
@@ -76,7 +90,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
                 ExportUnmanagedSolution(solutionName, solutionFileName);
                 UnpackUnmangedSolutionZip(solutionName, solutionFileName, _solutionPackagerPath, _workingDirectory);
                 SetPackageName(_targetSolutionName, solutionName);
-                //SetPackageVersion(_targetSolutionFileName);
+                SetPackageVersion(_targetSolutionVersion, solutionName);
                 PackUnmangedSolutionZip(solutionName, _targetSolutionFileName, _solutionPackagerPath, _workingDirectory);
                 ImportUnmanagedSolution(_targetSolutionFileName);
 
@@ -272,20 +286,37 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             solutionXml.Save(solutionXmlPath);
         }
 
-        private void SetPackageVersion(string targetSolutionFileName)
+        private void SetPackageVersion(string version, string packagePath)
         {
-            string version;
-            if (_targetSolution != null)
+            string solutionXmlPath = $@"{packagePath}\Other\Solution.xml";
+
+            XmlDocument solutionXml = new XmlDocument();
+            solutionXml.Load(solutionXmlPath);
+
+            XmlElement importExportXml = solutionXml["ImportExportXml"];
+            if (importExportXml == null)
             {
-                version = _targetSolution.GetAttributeValue<string>("version");
-            }
-            else
-            {
-                // TODO Prompt for version
-                version = "1.0.0.0";
+                Console.WriteLine("Could not find xml element <ImportExportXml>");
+                return;
             }
 
-            // TODO set version in XML
+            XmlElement solutionManifest = importExportXml["SolutionManifest"];
+            if (solutionManifest == null)
+            {
+                Console.WriteLine("Could not find xml element <SolutionManifest>");
+                return;
+            }
+
+            XmlElement versionElement = solutionManifest["Version"];
+            if (versionElement == null)
+            {
+                Console.WriteLine("Could not find xml element <Version>");
+                return;
+            }
+
+            versionElement.InnerText = version;
+
+            solutionXml.Save(solutionXmlPath);
         }
 
         private void PackUnmangedSolutionZip(

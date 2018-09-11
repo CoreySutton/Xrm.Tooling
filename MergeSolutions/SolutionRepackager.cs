@@ -87,10 +87,9 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 
         private static string PromptTargetSolutionName()
         {
-            Console.WriteLine("Target solution name:");
+            Console.Write(">> Target solution name: ");
             while (true)
             {
-                Console.Write(">> ");
                 string input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input))
                 {
@@ -105,10 +104,9 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 
         private bool PromptAnotherSolution()
         {
-            Console.WriteLine("Add another solution? (yes/no)");
+            Console.Write(">> Add another solution (yes|no)?: ");
             while (true)
             {
-                Console.Write(">> ");
                 string input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input) || (input != "yes" && input != "no" && input != "y" && input != "n"))
                 {

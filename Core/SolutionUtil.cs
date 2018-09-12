@@ -82,6 +82,27 @@ namespace CoreySutton.Xrm.Tooling.Core
             return solutions.First();
         }
 
+        public static IList<Entity> GetSolutionsByName(
+            IOrganizationService organizationService,
+            IEnumerable<string> uniqueName)
+        {
+            QueryExpression query = new QueryExpression
+            {
+                EntityName = "solution",
+                ColumnSet = new ColumnSet(true),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("uniquename", ConditionOperator.Equal, uniqueName)
+                    }
+                }
+            };
+
+            IList<Entity> solutions = organizationService.RetrieveMultiple<Entity>(query);
+            return Validator.IsNullOrEmpty(solutions) ? null : solutions;
+        }
+
         public static void PrintSolutions(IList<Entity> solutions, bool allowNew = false)
         {
             Argument.IsNotNullOrEmpty(solutions, nameof(solutions));

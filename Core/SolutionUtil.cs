@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CoreySutton.Utilities;
 using CoreySutton.Xrm.Utilities;
 using Microsoft.Xrm.Sdk;
@@ -48,6 +49,37 @@ namespace CoreySutton.Xrm.Tooling.Core
             };
 
             return organizationService.RetrieveMultiple<Entity>(query);
+        }
+
+        public static Entity GetSolutionByName(
+            IOrganizationService organizationService,
+            string uniqueName)
+        {
+            QueryExpression query = new QueryExpression
+            {
+                EntityName = "solution",
+                ColumnSet = new ColumnSet(true),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("uniquename", ConditionOperator.Equal, uniqueName)
+                    }
+                }
+            };
+
+            IList<Entity> solutions = organizationService.RetrieveMultiple<Entity>(query);
+            if (Validator.IsNullOrEmpty(solutions))
+            {
+                return null;
+            }
+
+            if (solutions.Count > 1)
+            {
+                throw new Exception($"Found {solutions.Count} solutions with unique name {uniqueName}, expected 1");
+            }
+
+            return solutions.First();
         }
 
         public static void PrintSolutions(IList<Entity> solutions, bool allowNew = false)

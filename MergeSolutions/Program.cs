@@ -33,7 +33,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             IOrganizationService targetOrganizationService = ConnectToTarget() ?? sourceOrganizationService;
 
             SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
-            solutionRepackager.SetTargetSolution();
+            solutionRepackager.SetTargetSolution(options.Target);
             solutionRepackager.SetSourceSolutions();
             solutionRepackager.SetVersion();
             solutionRepackager.StartMerge();

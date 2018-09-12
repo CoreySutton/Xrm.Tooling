@@ -33,10 +33,17 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             _allSourceSolutions = SolutionUtil.GetUnmanagedSolutions(_sourceOrganizationService);
         }
 
-        public void SetTargetSolution()
+        public void SetTargetSolution(string uniqueName = null)
         {
-            SolutionUtil.PrintSolutions(_allSourceSolutions, true);
-            _targetSolution = SolutionUtil.PromptPickSolution(_allSourceSolutions);
+            if (string.IsNullOrEmpty(uniqueName))
+            {
+                SolutionUtil.PrintSolutions(_allSourceSolutions, true);
+                _targetSolution = SolutionUtil.PromptPickSolution(_allSourceSolutions);
+            }
+            else
+            {
+                _targetSolution = SolutionUtil.GetSolutionByName(_sourceOrganizationService, uniqueName);
+            }
 
             if (_targetSolution != null)
             {

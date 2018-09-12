@@ -57,21 +57,29 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             }
         }
 
-        public void SetSourceSolutions()
+        public void SetSourceSolutions(IEnumerable<string> solutionUniqueNames)
         {
-            SolutionUtil.PrintSolutions(_allSourceSolutions);
-
-            bool anotherSolution;
-            do
+            if (Validator.IsNullOrEmpty(solutionUniqueNames))
             {
-                Entity solution = SolutionUtil.PromptPickSolution(_allSourceSolutions);
-                if (solution != null)
-                {
-                    _sourceSolutions.Add(solution);
-                }
+                SolutionUtil.PrintSolutions(_allSourceSolutions);
 
-                anotherSolution = PromptAnotherSolution();
-            } while (anotherSolution);
+                bool anotherSolution;
+                do
+                {
+                    Entity solution = SolutionUtil.PromptPickSolution(_allSourceSolutions);
+                    if (solution != null)
+                    {
+                        _sourceSolutions.Add(solution);
+                    }
+
+                    anotherSolution = PromptAnotherSolution();
+                } while (anotherSolution);
+            }
+            else
+            {
+                IList<Entity> solutions = SolutionUtil.GetSolutionsByName(_sourceOrganizationService, solutionUniqueNames);
+                _sourceSolutions.AddRange(solutions);
+            }
         }
 
         public void SetVersion()

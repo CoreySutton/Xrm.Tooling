@@ -29,8 +29,8 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 
         private static void Run(CliOptions options)
         {
-            IOrganizationService sourceOrganizationService = ConnectToSource();
-            IOrganizationService targetOrganizationService = ConnectToTarget() ?? sourceOrganizationService;
+            IOrganizationService sourceOrganizationService = ConnectToSource(options.SourceConnectinString);
+            IOrganizationService targetOrganizationService = ConnectToTarget(options.TargetConnectionString) ?? sourceOrganizationService;
 
             SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
             solutionRepackager.SetTargetSolution(options.Target);
@@ -49,16 +49,20 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             }
         }
 
-        private static IOrganizationService ConnectToSource()
+        private static IOrganizationService ConnectToSource(string connectionString)
         {
             string crmConnectionString = Properties.Settings.Default.SourceCrmConnectionString;
-            return CrmConnectorUtil.Connect(crmConnectionString);
+            return CrmConnectorUtil.Connect(connectionString ?? crmConnectionString);
         }
 
-        private static IOrganizationService ConnectToTarget()
+        private static IOrganizationService ConnectToTarget(string connectionString)
         {
             string crmConnectionString = Properties.Settings.Default.TargetCrmConnectionString;
-            return string.IsNullOrEmpty(crmConnectionString) ? null : CrmConnectorUtil.Connect(crmConnectionString);
+            if (string.IsNullOrEmpty(crmConnectionString) && string.IsNullOrEmpty(connectionString))
+            {
+                return null;
+            }
+            return CrmConnectorUtil.Connect(connectionString ?? crmConnectionString);
         }
     }
 }

@@ -29,12 +29,17 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 
         private static void Run(CliOptions options)
         {
+            Config config = ConfigParser.Read("Config.json");
+
             IOrganizationService sourceOrganizationService = ConnectToSource(options.SourceConnectinString);
             IOrganizationService targetOrganizationService = ConnectToTarget(options.TargetConnectionString) ?? sourceOrganizationService;
 
+            string targetSolutionName = options.Target ?? config?.SolutionName;
+            IList<string> solutions = GetSolutions(options, config);
+
             SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
-            solutionRepackager.SetTargetSolution(options.Target);
-            solutionRepackager.SetSourceSolutions(options.Solutions);
+            solutionRepackager.SetTargetSolution(targetSolutionName);
+            solutionRepackager.SetSourceSolutions(solutions);
             solutionRepackager.SetVersion();
             solutionRepackager.StartMerge();
         }
@@ -63,6 +68,17 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
                 return null;
             }
             return CrmConnectorUtil.Connect(connectionString ?? crmConnectionString);
+        }
+
+        private static IList<string> GetSolutions(CliOptions options, Config config)
+        {
+            if (!Validator.IsNullOrEmpty(options.Solutions))
+                return options.Solutions;
+
+            if (!Validator.IsNullOrEmpty(config?.Solutions))
+                return config?.Solutions;
+
+            return null;
         }
     }
 }

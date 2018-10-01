@@ -6,7 +6,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
     public class CliOptions
     {
         [Option('s', "solutions", HelpText = "List of solution unique names to merge")]
-        public IEnumerable<string> Solutions { get; set; }
+        public IList<string> Solutions { get; set; }
 
         [Option('t', "target", HelpText = "Unique name of solution to merge into")]
         public string Target { get; set; }

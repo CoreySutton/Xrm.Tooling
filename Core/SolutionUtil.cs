@@ -84,7 +84,7 @@ namespace CoreySutton.Xrm.Tooling.Core
 
         public static IList<Entity> GetSolutionsByName(
             IOrganizationService organizationService,
-            IEnumerable<string> uniqueName)
+            string[] uniqueNames)
         {
             QueryExpression query = new QueryExpression
             {
@@ -94,7 +94,7 @@ namespace CoreySutton.Xrm.Tooling.Core
                 {
                     Conditions =
                     {
-                        new ConditionExpression("uniquename", ConditionOperator.Equal, uniqueName)
+                        new ConditionExpression("uniquename", ConditionOperator.In, uniqueNames)
                     }
                 }
             };

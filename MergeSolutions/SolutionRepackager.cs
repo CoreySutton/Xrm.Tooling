@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using CoreySutton.Utilities;
 using CoreySutton.Xrm.Tooling.Core;
@@ -45,19 +46,19 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
                 _targetSolution = SolutionUtil.GetSolutionByName(_sourceOrganizationService, uniqueName);
             }
 
-            if (_targetSolution != null)
+            if (_targetSolution == null)
             {
-                _targetSolutionName = _targetSolution.GetAttributeValue<string>("uniquename");
+                _targetSolutionName = uniqueName ?? PromptTargetSolutionName();
                 _targetSolutionFileName = $"{_targetSolutionName}.zip";
             }
             else
             {
-                _targetSolutionName = PromptTargetSolutionName();
+                _targetSolutionName = _targetSolution.GetAttributeValue<string>("uniquename");
                 _targetSolutionFileName = $"{_targetSolutionName}.zip";
             }
         }
 
-        public void SetSourceSolutions(IEnumerable<string> solutionUniqueNames)
+        public void SetSourceSolutions(IList<string> solutionUniqueNames)
         {
             if (Validator.IsNullOrEmpty(solutionUniqueNames))
             {
@@ -77,7 +78,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             }
             else
             {
-                IList<Entity> solutions = SolutionUtil.GetSolutionsByName(_sourceOrganizationService, solutionUniqueNames);
+                IList<Entity> solutions = SolutionUtil.GetSolutionsByName(_sourceOrganizationService, solutionUniqueNames.ToArray());
                 _sourceSolutions.AddRange(solutions);
             }
         }

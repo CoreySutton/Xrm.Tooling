@@ -94,10 +94,7 @@ namespace CoreySutton.Xrm.Tooling.Core
                 {
                     VersionNumber incremented = new VersionNumber(input);
 
-                    if (incremented.Major > current.Major ||
-                        incremented.Minor > current.Minor ||
-                        incremented.Patch > current.Patch ||
-                        incremented.Build > current.Build)
+                    if (IsIncremented(incremented, current))
                     {
                         version = input;
                     }
@@ -134,6 +131,26 @@ namespace CoreySutton.Xrm.Tooling.Core
                     }
                 }
             }
+        }
+
+        public static bool IsIncremented(string incremented, string current)
+        {
+            VersionNumber incrementedVersionNumber = new VersionNumber(incremented);
+            VersionNumber currentVersionNumber = new VersionNumber(current);
+
+            return IsIncremented(incrementedVersionNumber, currentVersionNumber);
+        }
+
+        public static bool IsIncremented(VersionNumber incremented, VersionNumber current)
+        {
+            if (incremented.Major > current.Major ||
+                incremented.Minor > current.Minor ||
+                incremented.Patch > current.Patch ||
+                incremented.Build > current.Build)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

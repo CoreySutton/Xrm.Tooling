@@ -9,10 +9,10 @@ namespace CoreySutton.Xrm.Tooling.Core
         public int Patch { get; set; }
         public int Build { get; set; }
 
-        public VersionNumber(string currentVersion)
+        public VersionNumber(string versionNumber)
         {
             // Parse current version number
-            string[] currentVersionComponents = currentVersion.Split('.');
+            string[] currentVersionComponents = versionNumber.Split('.');
             bool parsedMajor = int.TryParse(currentVersionComponents[0], out int major);
             bool parsedMinor = int.TryParse(currentVersionComponents[1], out int minor);
             bool parsedPatch = int.TryParse(currentVersionComponents[2], out int patch);

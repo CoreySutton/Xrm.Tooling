@@ -40,7 +40,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
             solutionRepackager.SetTargetSolution(targetSolutionName);
             solutionRepackager.SetSourceSolutions(solutions);
-            solutionRepackager.SetVersion();
+            solutionRepackager.SetVersion(config.Version);
             solutionRepackager.StartMerge();
         }
 

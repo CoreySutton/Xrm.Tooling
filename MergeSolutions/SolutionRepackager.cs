@@ -83,16 +83,34 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             }
         }
 
-        public void SetVersion()
+        public void SetVersion(string version = null)
         {
-            if (_targetSolution != null)
-            {
-                string currentVersion = _targetSolution.GetAttributeValue<string>("version");
-                _targetSolutionVersion = VersionNumberUtil.PromptIncrement(currentVersion);
-            }
-            else
+            // A new solution
+            if (_targetSolution == null)
             {
                 _targetSolutionVersion = VersionNumberUtil.Prompt();
+                return;
+            }
+            
+            string currentVersion = _targetSolution.GetAttributeValue<string>("version");
+
+            // An existing solution
+            // Version number is not supplied
+            if (string.IsNullOrEmpty(version))
+            {
+                _targetSolutionVersion = VersionNumberUtil.PromptIncrement(currentVersion);
+            }
+            // Version number not supplied
+            else
+            {
+                if (VersionNumberUtil.IsIncremented(version, currentVersion))
+                {
+                    _targetSolutionVersion = version;
+                }
+                else
+                {
+                    _targetSolutionVersion = VersionNumberUtil.PromptIncrement(currentVersion);
+                }
             }
         }
 

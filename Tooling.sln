@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeSolutions", "MergeSolu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{75A1072D-F94B-46A0-B23D-60AC2E0EFE27}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertToGlobalOptionSet", "ConvertToGlobalOptionSet\ConvertToGlobalOptionSet.csproj", "{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{75A1072D-F94B-46A0-B23D-60AC2E0EFE27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A1072D-F94B-46A0-B23D-60AC2E0EFE27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75A1072D-F94B-46A0-B23D-60AC2E0EFE27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

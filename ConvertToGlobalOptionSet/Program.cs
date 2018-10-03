@@ -12,7 +12,7 @@ namespace CoreySutton.Xrm.Tooling.ConvertToGlobalOptionSet
 {
     class Program
     {
-        // Specify which language code to use in the sample. If you are using a language
+        // Specify which language code to use. If you are using a language
         // other than US English, you will need to modify this value accordingly.
         // See http://msdn.microsoft.com/en-us/library/0h88fahh.aspx
         private const int _languageCode = 1033;
@@ -36,7 +36,10 @@ namespace CoreySutton.Xrm.Tooling.ConvertToGlobalOptionSet
                 string globalOptionSetDisplayName = PromptGlobalOptionSetDisplayName();
 
                 // Create global option set
-                CreateGlobalOptionSet(globalOptionSetLogicalName, globalOptionSetDisplayName, optionMetadatas);
+                if (!DoesGlobalOptionSetExist(globalOptionSetLogicalName))
+                {
+                    CreateGlobalOptionSet(globalOptionSetLogicalName, globalOptionSetDisplayName, optionMetadatas);
+                }
             }
 
             Console.WriteLine("Complete");
@@ -113,6 +116,32 @@ namespace CoreySutton.Xrm.Tooling.ConvertToGlobalOptionSet
             }
         }
 
+        private static bool DoesGlobalOptionSetExist(string logicalName)
+        {
+            RetrieveOptionSetRequest request = new RetrieveOptionSetRequest
+            {
+                Name = logicalName
+            };
+
+            try
+            {
+                var respone = (RetrieveOptionSetResponse)_organizationService.Execute(request);
+                if (respone?.OptionSetMetadata != null && respone.Results != null)
+                {
+                    return true;
+                }
+            }
+            catch (FaultException<OrganizationServiceFault> ex)
+            {
+                ExConsole.WriteLineColor(
+                    $"Could not find global option set {logicalName}: {ex.Message}",
+                    ConsoleColor.DarkGray);
+            }
+
+
+            return false;
+        }
+
         private static void CreateGlobalOptionSet(
             string logicalName,
             string displayName,
@@ -138,7 +167,9 @@ namespace CoreySutton.Xrm.Tooling.ConvertToGlobalOptionSet
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
-                Console.WriteLine($"Could not create global option set {logicalName}: {ex.Message}");
+                ExConsole.WriteLineColor(
+                    $"Could not create global option set {logicalName}: {ex.Message}",
+                    ConsoleColor.Red);
             }
         }
     }

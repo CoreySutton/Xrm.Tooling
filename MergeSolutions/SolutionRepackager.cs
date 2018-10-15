@@ -91,7 +91,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
                 _targetSolutionVersion = VersionNumberUtil.Prompt();
                 return;
             }
-            
+
             string currentVersion = _targetSolution.GetAttributeValue<string>("version");
 
             // An existing solution

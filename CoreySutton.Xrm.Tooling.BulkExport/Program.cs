@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CoreySutton.Utilities;
 using CoreySutton.Xrm.Tooling.Core;
 using CoreySutton.Xrm.Utilities;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace CoreySutton.Xrm.Tooling.BulkExport
 {
@@ -19,36 +21,42 @@ namespace CoreySutton.Xrm.Tooling.BulkExport
 
             if (Validator.IsNullOrEmpty(solutionUniqueNames))
             {
-                ExConsole.WriteLine("No solutions found, exiting...");
+                ExConsole.WriteLine("No solutions found, backing up all");
+                solutionUniqueNames = GetAllUnmanagedSolutions(organizationService);
             }
-            else
-            {
-                ExConsole.WriteLine($"Discovered {solutionUniqueNames.Count} solutions");
-                ExportSolutions(solutionUniqueNames, organizationService);
-            }
+
+            ExConsole.WriteLine($"Discovered {solutionUniqueNames.Count} solutions");
+
+            new SolutionExport(organizationService).ExportMultiple(solutionUniqueNames);
 
             ExConsole.WriteColor("Complete", ConsoleColor.Green);
             Console.ReadLine();
         }
 
-        private static void ExportSolutions(IList<string> solutionUniqueNames, IOrganizationService organizationService)
+        private static IList<string> GetAllUnmanagedSolutions(IOrganizationService organizationService)
         {
-            var solutionExport = new SolutionExport(organizationService);
-            foreach (string uniqueName in solutionUniqueNames)
+            var query = new QueryExpression("solution")
             {
-                ExConsole.Write($"Exporting {uniqueName}");
-                try
+                ColumnSet = new ColumnSet(true),
+                Criteria =
                 {
-                    solutionExport.ExportUnmanaged(uniqueName, $"{uniqueName}.zip");
-                    ExConsole.WriteLineToRight("[Done]");
-                }
-                catch (Exception ex)
+                    Conditions =
+                    {
+                        new ConditionExpression("ismanaged", ConditionOperator.Equal, false),
+                        new ConditionExpression("isvisible", ConditionOperator.Equal, true),
+                    }
+                },
+                Orders =
                 {
-                    ExConsole.WriteLineToRight("[Failed]");
-                    ExConsole.WriteColor($"An exception occurred: {ex.Message}", ConsoleColor.Red);
-                    ExConsole.WriteColor(ex.StackTrace, ConsoleColor.DarkGray);
+                    new OrderExpression("uniquename", OrderType.Ascending)
                 }
-            }
+            };
+
+            EntityCollection results = organizationService.RetrieveMultiple(query);
+
+            if (XrmValidator.IsNullOrEmpty(results)) return null;
+
+            return results.Entities.Select(e => e.GetAttributeValue<string>("uniquename")).ToList();
         }
     }
 }

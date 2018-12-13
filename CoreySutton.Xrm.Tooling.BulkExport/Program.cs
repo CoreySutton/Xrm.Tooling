@@ -15,19 +15,21 @@ namespace CoreySutton.Xrm.Tooling.BulkExport
         {
             string crmConnectionString = Properties.Settings.Default.CrmConnectionString;
             IOrganizationService organizationService = CrmConnectorUtil.Connect(crmConnectionString);
-
-            Config config = ConfigParser<Config>.Read("Config.json");
-            IList<string> solutionUniqueNames = config.Solutions;
-
-            if (Validator.IsNullOrEmpty(solutionUniqueNames))
+            if (organizationService != null)
             {
-                ExConsole.WriteLine("No solutions found, backing up all");
-                solutionUniqueNames = GetAllUnmanagedSolutions(organizationService);
+                Config config = ConfigParser<Config>.Read("Config.json");
+                IList<string> solutionUniqueNames = config.Solutions;
+
+                if (Validator.IsNullOrEmpty(solutionUniqueNames))
+                {
+                    ExConsole.WriteLine("No solutions found, backing up all");
+                    solutionUniqueNames = GetAllUnmanagedSolutions(organizationService);
+                }
+
+                ExConsole.WriteLine($"Discovered {solutionUniqueNames.Count} solutions");
+
+                new SolutionExport(organizationService).ExportMultiple(solutionUniqueNames);
             }
-
-            ExConsole.WriteLine($"Discovered {solutionUniqueNames.Count} solutions");
-
-            new SolutionExport(organizationService).ExportMultiple(solutionUniqueNames);
 
             ExConsole.WriteColor("Complete", ConsoleColor.Green);
             Console.ReadLine();

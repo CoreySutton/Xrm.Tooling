@@ -5,6 +5,7 @@ using CoreySutton.Utilities;
 using CoreySutton.Xrm.Tooling.Core;
 using CoreySutton.Xrm.Utilities;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace CoreySutton.Xrm.Tooling.BulkExport
@@ -14,21 +15,31 @@ namespace CoreySutton.Xrm.Tooling.BulkExport
         private static void Main()
         {
             string crmConnectionString = Properties.Settings.Default.CrmConnectionString;
-            IOrganizationService organizationService = CrmConnectorUtil.Connect(crmConnectionString);
+            OrganizationServiceProxy organizationService = CrmConnectorUtil.Connect(crmConnectionString) as OrganizationServiceProxy;
+            
             if (organizationService != null)
             {
                 Config config = ConfigParser<Config>.Read("Config.json");
                 IList<string> solutionUniqueNames = config.Solutions;
 
+                if (config.TimeoutMinutes > 0)
+                {
+                    organizationService.Timeout = new TimeSpan(0, config.TimeoutMinutes, 0);
+                }
+
                 if (Validator.IsNullOrEmpty(solutionUniqueNames))
                 {
-                    ExConsole.WriteLine("No solutions found, backing up all");
+                    ExConsole.WriteLine("No solutions found in Config.json, backing up all");
                     solutionUniqueNames = GetAllUnmanagedSolutions(organizationService);
+                    if (config.ExcludeDefault)
+                    {
+                        solutionUniqueNames = solutionUniqueNames.Where(n => n.ToLower() != "default").ToList();
+                    }
                 }
 
                 ExConsole.WriteLine($"Discovered {solutionUniqueNames.Count} solutions");
 
-                new SolutionExport(organizationService).ExportMultiple(solutionUniqueNames);
+                new SolutionExport(organizationService).ExportMultiple(solutionUniqueNames, config.OutputPath, config.OutputFolderDateFormat);
             }
 
             ExConsole.WriteColor("Complete", ConsoleColor.Green);

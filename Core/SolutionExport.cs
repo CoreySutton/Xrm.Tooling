@@ -23,13 +23,20 @@ namespace CoreySutton.Xrm.Tooling.Core
         public bool RelationshipRoles = false;
         public bool Sales = false;
         private readonly IOrganizationService _organizationService;
+        private readonly DateTime _outputFolderDate;
+        private const string _defaultOutputFolderDateFormat = "yyyyMMdd-HHmmss";
 
         public SolutionExport(IOrganizationService organizationService)
         {
             _organizationService = organizationService;
+            _outputFolderDate = DateTime.Now;
         }
 
-        public void Export(string solutionUniqueName, string filePath = "", bool managed = false)
+        public void Export(
+            string solutionUniqueName, 
+            string filePath = "", 
+            string outputFolderDateFormat = _defaultOutputFolderDateFormat, 
+            bool managed = false)
         {
             var request = new ExportSolutionRequest
             {
@@ -61,19 +68,28 @@ namespace CoreySutton.Xrm.Tooling.Core
                 throw;
             }
 
-            using (var fs = File.Create($"{filePath}{solutionUniqueName}.zip"))
+            // Create directory if it doesnt already exist
+            string dateFormat = string.IsNullOrEmpty(outputFolderDateFormat) ? _defaultOutputFolderDateFormat : outputFolderDateFormat;
+            string path = $"{filePath}\\{_outputFolderDate.ToString(dateFormat)}";
+            Directory.CreateDirectory(path);
+
+            using (var fs = File.Create($"{path}\\{solutionUniqueName}.zip"))
             {
                 fs.Write(response.ExportSolutionFile, 0, response.ExportSolutionFile.Length);
             }
         }
 
-        public void ExportMultiple(IList<string> solutionUniqueNames, string filePath = "", bool managed = false)
+        public void ExportMultiple(
+            IList<string> solutionUniqueNames, 
+            string filePath = "",
+            string outputFolderDateFormat = _defaultOutputFolderDateFormat, 
+            bool managed = false)
         {
             foreach (string solutionUniqueName in solutionUniqueNames)
             {
                 try
                 {
-                    Export(solutionUniqueName, filePath, managed);
+                    Export(solutionUniqueName, filePath, outputFolderDateFormat, managed);
                 }
                 catch (Exception ex)
                 {
@@ -88,7 +104,7 @@ namespace CoreySutton.Xrm.Tooling.Core
             Parallel.ForEach(
                 solutionUniqueNames,
                 new ParallelOptions { MaxDegreeOfParallelism = 4 },
-                uniqueName => Export(uniqueName, filePath, managed));
+                uniqueName => Export(uniqueName, filePath, managed:managed));
         }
     }
 }

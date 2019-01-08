@@ -1,4 +1,7 @@
 {
-  "Solutions": [
-  ]
+  "Solutions": [],
+  "OutputPath": "C:\\Users\\<Username>\\Desktop\\Solutions",
+  "ExcludeDefault": false,
+  "OutputFolderDateFormat": "yyyyMMdd",
+  "TimeoutMinutes": 5
 }

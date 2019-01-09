@@ -26,6 +26,7 @@ namespace CoreySutton.Xrm.Tooling.BulkExport.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("CONNECTION STRING GOES HERE")]
         public string CrmConnectionString {
             get {
                 return ((string)(this["CrmConnectionString"]));

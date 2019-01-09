@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertToGlobalOptionSet", "ConvertToGlobalOptionSet\ConvertToGlobalOptionSet.csproj", "{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkExport", "CoreySutton.Xrm.Tooling.BulkExport\BulkExport.csproj", "{2008C1CC-5F6E-484E-A544-3FECBF19AB43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BulkExport", "BulkExport\BulkExport.csproj", "{2008C1CC-5F6E-484E-A544-3FECBF19AB43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

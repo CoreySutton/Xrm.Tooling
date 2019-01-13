@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using CoreySutton.Utilities;
@@ -42,7 +42,10 @@ namespace CoreySutton.Xrm.Tooling.BulkExport
             }
 
             ExConsole.WriteColor("Complete", ConsoleColor.Green);
-            Console.ReadLine();
+            if (config.PromptBeforeClose)
+            {
+                Console.ReadLine();
+            }
         }
 
         private static IList<string> GetAllUnmanagedSolutions(IOrganizationService organizationService)

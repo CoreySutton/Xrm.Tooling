@@ -1,8 +1,9 @@
 {
   "Solutions": ["mysolution"],
   "OutputPath": "C:\\Users\\USERNAME\\Desktop\\Solutions",
-  "ExcludeDefault": true,
+  "ExcludeDefault": false,
   "OutputFolderDateFormat": "yyyyMMdd",
-  "TimeoutMinutes": 5
+  "TimeoutMinutes": 1,
   "ConnectionString": "Url=; AuthType=Office365; Username=; Password=;",
+  "PromptBeforeClose": false
 }

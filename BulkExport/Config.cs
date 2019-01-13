@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CoreySutton.Xrm.Tooling.BulkExport
@@ -22,5 +22,8 @@ namespace CoreySutton.Xrm.Tooling.BulkExport
 
         [JsonProperty("ConnectionString")]
         public string ConnectionString { get; set; }
+
+        [JsonProperty("PromptBeforeClose")]
+        public bool PromptBeforeClose { get; set; }
     }
 }

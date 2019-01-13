@@ -13,6 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulkExport", "BulkExport\Bu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatchAndUpgrade", "PatchAndUpgrade\PatchAndUpgrade.csproj", "{656D4EC6-B8D1-4339-A114-7E06931308A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportSolution", "TransportSolution\TransportSolution.csproj", "{0E3C86C7-ACA7-4C97-9E54-22CB853C5FC0}"
+EndProject
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +34,10 @@ Global
 		{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7563479D-A6F9-4ACC-8DED-1AE9688E1C6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E3C86C7-ACA7-4C97-9E54-22CB853C5FC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E3C86C7-ACA7-4C97-9E54-22CB853C5FC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E3C86C7-ACA7-4C97-9E54-22CB853C5FC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E3C86C7-ACA7-4C97-9E54-22CB853C5FC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2008C1CC-5F6E-484E-A544-3FECBF19AB43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2008C1CC-5F6E-484E-A544-3FECBF19AB43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2008C1CC-5F6E-484E-A544-3FECBF19AB43}.Release|Any CPU.ActiveCfg = Release|Any CPU

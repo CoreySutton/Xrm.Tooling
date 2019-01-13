@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CoreySutton.Utilities;
@@ -14,12 +14,11 @@ namespace CoreySutton.Xrm.Tooling.BulkExport
     {
         private static void Main()
         {
-            string crmConnectionString = Properties.Settings.Default.CrmConnectionString;
-            OrganizationServiceProxy organizationService = CrmConnectorUtil.Connect(crmConnectionString) as OrganizationServiceProxy;
+            Config config = ConfigParser<Config>.Read("Config.json");
+            OrganizationServiceProxy organizationService = CrmConnectorUtil.Connect(config.ConnectionString) as OrganizationServiceProxy;
             
             if (organizationService != null)
-            {
-                Config config = ConfigParser<Config>.Read("Config.json");
+            {                
                 IList<string> solutionUniqueNames = config.Solutions;
 
                 if (config.TimeoutMinutes > 0)

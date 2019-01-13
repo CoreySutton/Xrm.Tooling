@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace CoreySutton.Xrm.Tooling.BulkExport
@@ -19,5 +19,8 @@ namespace CoreySutton.Xrm.Tooling.BulkExport
 
         [JsonProperty("TimeoutMinutes")]
         public int TimeoutMinutes { get; set; }
+
+        [JsonProperty("ConnectionString")]
+        public string ConnectionString { get; set; }
     }
 }

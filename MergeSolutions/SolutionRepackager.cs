@@ -91,7 +91,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
                 _targetSolutionVersion = VersionNumberUtil.Prompt();
                 return;
             }
-            
+
             string currentVersion = _targetSolution.GetAttributeValue<string>("version");
 
             // An existing solution
@@ -116,12 +116,13 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 
         public void StartMerge()
         {
+            var solutionExport = new SolutionExport(_sourceOrganizationService);
             foreach (Entity solution in _sourceSolutions)
             {
                 string solutionName = solution.GetAttributeValue<string>("uniquename");
                 string solutionFileName = $"{solutionName}.zip";
 
-                ExportUnmanagedSolution(solutionName, solutionFileName);
+                solutionExport.Export(solutionFileName, solutionFileName);
                 UnpackUnmangedSolutionZip(solutionName, solutionFileName, _solutionPackagerPath, _workingDirectory);
                 SetPackageName(_targetSolutionName, solutionName);
                 SetPackageVersion(_targetSolutionVersion, solutionName);
@@ -169,37 +170,6 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
                     return false;
                 }
             }
-        }
-
-        private void ExportUnmanagedSolution(string solutionUniqueName, string filePath)
-        {
-            var request = new ExportSolutionRequest
-            {
-                SolutionName = solutionUniqueName,
-                ExportAutoNumberingSettings = false,
-                ExportCalendarSettings = false,
-                ExportCustomizationSettings = false,
-                ExportEmailTrackingSettings = false,
-                ExportExternalApplications = false,
-                ExportGeneralSettings = false,
-                ExportIsvConfig = false,
-                ExportMarketingSettings = false,
-                ExportOutlookSynchronizationSettings = false,
-                ExportRelationshipRoles = false,
-                ExportSales = false,
-                Managed = false
-            };
-
-            ExConsole.WriteLine($"Exporting {solutionUniqueName}...");
-
-            ExportSolutionResponse response = (ExportSolutionResponse)_sourceOrganizationService.Execute(request);
-
-            using (var fs = File.Create(filePath))
-            {
-                fs.Write(response.ExportSolutionFile, 0, response.ExportSolutionFile.Length);
-            }
-
-            ExConsole.WriteLineToRight("[Done]");
         }
 
         private void UnpackUnmangedSolutionZip(

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CommandLine;
 using CoreySutton.Utilities;
+using CoreySutton.Xrm.Tooling.Core;
 using CoreySutton.Xrm.Utilities;
 using Microsoft.Xrm.Sdk;
 
@@ -29,7 +30,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
 
         private static void Run(CliOptions options)
         {
-            Config config = ConfigParser.Read("Config.json");
+            Config config = ConfigParser<Config>.Read("Config.json");
 
             IOrganizationService sourceOrganizationService = ConnectToSource(options.SourceConnectinString);
             IOrganizationService targetOrganizationService = ConnectToTarget(options.TargetConnectionString) ?? sourceOrganizationService;
@@ -40,7 +41,7 @@ namespace CoreySutton.Xrm.Tooling.MergeSolutions
             SolutionRepackager solutionRepackager = new SolutionRepackager(sourceOrganizationService, targetOrganizationService);
             solutionRepackager.SetTargetSolution(targetSolutionName);
             solutionRepackager.SetSourceSolutions(solutions);
-            solutionRepackager.SetVersion(config.Version);
+            solutionRepackager.SetVersion(config?.Version);
             solutionRepackager.StartMerge();
         }
 

@@ -1,0 +1,15 @@
+{
+    "earlyboundtypes": [
+        {
+            "entities": "solutioncomponent,dependency,solution",
+            "actions": "",
+            "generateOptionsetEnums": "true",
+            "generateStateEnums": "true",
+            "generateGlobalOptionsets": true,
+            "filename": "EarlyBound.cs",
+            "oneTypePerFile": false,
+            "classNamespace": "CoreySutton.Xrm.Tooling.DependencyReport",
+            "serviceContextName": "XrmSvc"
+        }
+    ]
+}

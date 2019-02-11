@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CoreySutton.Xrm.Tooling.DependencyReport
 {
@@ -9,5 +10,7 @@ namespace CoreySutton.Xrm.Tooling.DependencyReport
         public string EntityLogicalName { get; set; }
         public componenttype ComponentType { get; set; }
         public Guid ComponentId { get; set; }
+        public AttributeRequiredLevel RequiredLevel { get; set; }
+        public bool IsValidForAdvancedFind { get; set; }
     }
 }

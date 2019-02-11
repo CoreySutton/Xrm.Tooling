@@ -13,20 +13,17 @@ namespace CoreySutton.Xrm.Tooling.DependencyReport
         public AttributeDeprecator(IOrganizationService orgSvc, bool prompt = true)
         {
             _orgSvc = orgSvc;
-            Prompt = true;
+            Prompt = prompt;
         }
 
         public void Process(IList<ComponentInfo> cInfos)
         {
             foreach (ComponentInfo cInfo in cInfos)
             {
-                if (!cInfo.Name.Contains("[DEP]"))
+                if (Prompt == false || Prompter.YesNo("Depricate Attribute", true))
                 {
-                    if (Prompt == false || Prompter.YesNo("Depricate Attribute", true))
-                    {
-                        AttributeDao.Deprecate(_orgSvc, cInfo.ComponentId, cInfo.EntityLogicalName, cInfo.Name);
-                        Console.WriteLine($"{cInfo.Name} - Attribute Depricated");
-                    }
+                    AttributeDao.Deprecate(_orgSvc, cInfo);
+                    Console.WriteLine($"{cInfo.Name} - Attribute Depricated");
                 }
             }
         }

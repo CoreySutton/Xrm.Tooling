@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -82,8 +83,8 @@ namespace CoreySutton.Xrm.Tooling.DependencyReport
             // Skip as don't want base attributes
             if (_skipBase && cInfo.Name.Contains("(Base)")) return true;
 
-            // Skip as don't want deprecated attributes
-            if (_runDepricator && cInfo.Name.Contains("[DEP]")) return true;
+            // Skip as don't want deprecated attributes that are already hidden
+            if (_runDepricator && cInfo.Name.Contains("[DEP]") && !cInfo.IsValidForAdvancedFind) return true;
 
             return false;
         }
@@ -108,8 +109,35 @@ namespace CoreySutton.Xrm.Tooling.DependencyReport
             Console.WriteLine($"\t{cInfo.ComponentId} | {cInfo.ComponentType}");
                         
             // has data
-            if (hasData) Console.ForegroundColor = ConsoleColor.Red;
+            if (hasData)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+            }
             Console.WriteLine($"\tHas Data: {hasData}");
+
+            // required level
+            if (cInfo.RequiredLevel == AttributeRequiredLevel.ApplicationRequired ||
+                cInfo.RequiredLevel == AttributeRequiredLevel.SystemRequired)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            else if (cInfo.RequiredLevel == AttributeRequiredLevel.Recommended)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+            }
+            Console.WriteLine($"\tRequired Level: {cInfo.RequiredLevel.ToString()}");
+
+            // is valid for advanced find
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine($"\tIs Valid for Advanced Find: {cInfo.IsValidForAdvancedFind}");
 
             // is managed
             if (cInfo.IsManaged != null)
@@ -126,7 +154,7 @@ namespace CoreySutton.Xrm.Tooling.DependencyReport
                 Console.ForegroundColor = ConsoleColor.Gray;
             }
 
-            // reset color
+            // reset color incase it has changed
             Console.ForegroundColor = ConsoleColor.Gray;
         }
 

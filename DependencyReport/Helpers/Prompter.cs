@@ -8,7 +8,7 @@ namespace CoreySutton.Xrm.Tooling.DependencyReport
         {
             Console.WriteLine();
             Console.WriteLine("1) Show solution dependencies");
-            Console.WriteLine("1) Mark attributes as depricated");
+            Console.WriteLine("2) Mark attributes as depricated");
             Console.WriteLine("3) Show attributes with no dependencies");
             Console.WriteLine("4) Show global option set dependencies");
 

@@ -124,7 +124,9 @@ namespace CoreySutton.Xrm.Tooling.DependencyReport
                 IsManaged = attmet.IsManaged,
                 LogicalName = attmet.LogicalName,
                 ComponentType = componenttype.Attribute,
-                ComponentId = id
+                ComponentId = id,
+                RequiredLevel = attmet.RequiredLevel.Value,
+                IsValidForAdvancedFind = attmet.IsValidForAdvancedFind.Value
             };
         }
 

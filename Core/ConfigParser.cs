@@ -6,9 +6,10 @@ namespace CoreySutton.Xrm.Tooling.Core
 {
     public static class ConfigParser<TConfig>
     {
-        public static TConfig Read(string path)
+        public static TConfig Read(string configFileName)
         {
-            string json = File.ReadAllText(path);
+            string exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string json = File.ReadAllText($"{exePath}\\{configFileName}");
             return JsonConvert.DeserializeObject<TConfig>(json);
         }
 
